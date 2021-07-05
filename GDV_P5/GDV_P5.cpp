@@ -88,12 +88,19 @@ void aufgabe1() {
         }
     }
 
-    int x0 = 0, x1 = edges.rows - 1;
+    int x0 = 0, x1 = edges.cols - 1;
     for (int i = 0; i < 5; i++) {
         int d = max_vals_content[i].second;
         int angle = max_vals_content[i].first;
-        int y0 = (d - x0 * cosine(angle)) / sine(angle);
-        int y1 = (d - x1 * cosine(angle)) / sine(angle);
+        int y0, y1;
+        if (angle == 0) {
+            y0 = 0; 
+            y1 = img.rows - 1;
+        }
+        else {
+            y0 = (d - x0 * cosine(angle)) / sine(angle);
+            y1 = (d - x1 * cosine(angle)) / sine(angle);
+        }
         cv::line(img, cv::Point(x0, y0), cv::Point(x1, y1), cv::Scalar(255, 255, 0));
     }
 
@@ -101,9 +108,11 @@ void aufgabe1() {
     cv::namedWindow("Hough", cv::WINDOW_AUTOSIZE); // Create a window for display.
     cv::imshow("Hough", acc);
     cv::waitKey(0);
+    
 
     cv::namedWindow("Res", cv::WINDOW_AUTOSIZE); // Create a window for display.
     cv::imshow("Res", img);
+    
     cv::waitKey(0);
 }
 
@@ -152,13 +161,12 @@ void aufgabe3() {
     double threshold = 150;
     cv::Canny(img_gray, edges, threshold, threshold * 2.5);
 
-    cv::namedWindow("Canny", cv::WINDOW_AUTOSIZE); // Create a window for display.
+    cv::namedWindow("Canny", cv::WINDOW_AUTOSIZE); 
     cv::imshow("Canny", edges);
 
-    vector<Vec2f> lines; // will hold the results of the detection
-    HoughLines(edges, lines, 1, CV_PI / 180, 200, 0, 0); // runs the actual detection
+    vector<Vec2f> lines;
+    HoughLines(edges, lines, 1, CV_PI / 180, 200, 0, 0); 
    
-    int dist_thresh = 5;
     Point bottom0, bottom1, top0, top1;
     bottom0.x = bottom1.x = bottom0.y = bottom1.y = 10000000;
     top0.x = top1.x = top0.y = top1.y = 0;
